@@ -25,7 +25,6 @@
   [OutputType([int])]
   Param
   (
-    # Param1 help description
     [Parameter(Mandatory,HelpMessage='User first name')][string]$firstname,
     [Parameter(Mandatory,HelpMessage='User surname')][string]$lastname,
     [Parameter(Mandatory,HelpMessage='Primary Compass role')][string]$role
