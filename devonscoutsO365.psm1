@@ -1,25 +1,27 @@
 ﻿function New-dsO365User
 {
   <#
-      .SYNOPSIS
-      Creates a new Office 365 user and licenses for base services.
+    .SYNOPSIS
+    Creates a new Office 365 user and licenses for base services.
 
-      .DESCRIPTION
-      Creates a new Office 365 user and grants a new E2 license with unrequire services disabled.
+    .DESCRIPTION
+    Creates a new Office 365 user and grants a new E2 license with unrequire services disabled.
 
-      .NOTES
-      Place additional notes here.
+    .PARAMETER firstname
+    Users Firstname as defined on Compass.
 
-      .LINK
-      URLs to related sites
-      The first link is opened by Get-Help -Online New-dsO365User
+    .PARAMETER lastname
+    Users Lastname as defined on Compass.
 
-      .INPUTS
-      List of input types that are accepted by this function.
+    .PARAMETER role
+    Users primary role as defined on Compass.
 
-      .OUTPUTS
-      List of output types produced by this function.
+    .EXAMPLE
+    New-dsO365User -firstname 'John' -lastname 'Doe' -role 'County Commissioner'
+    Creates a new User Called John Doe with an alias of john.doe@devonscouts.org.uk
   #>
+
+
 
   [CmdletBinding()]
   [OutputType([int])]
