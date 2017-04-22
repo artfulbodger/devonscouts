@@ -40,7 +40,6 @@
   {
     $displayname = "$($firstname) $($lastname)"
     $upn = "$($firstname).$($lastname)@devonscouts.org.uk"
-    
     Try {
       $user = Get-MsolUser -UserPrincipalName $upn -ErrorAction Stop
       If ($user.IsLicensed -eq $false) {       
