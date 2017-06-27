@@ -1,4 +1,6 @@
-﻿function New-dsO365User
+﻿#Requires -version 3.0
+#Requires -modules MSOnline
+function New-dsO365User
 {
   <#
       .SYNOPSIS
