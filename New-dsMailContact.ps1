@@ -47,14 +47,19 @@ function New-dsMailContact
     Process
     {
       Try {
-        $null = Get-MailContact -Identity "$firstname $lastname" -ErrorAction Stop
-        Write-Verbose -Message "Contact $firstname $lastname already exists"
-      } Catch {
-        $null = New-MailContact -DisplayName "$firstname $lastname" -ExternalEmailAddress $ExternalEmailAddress -FirstName $firstname -LastName $lastname -Name "$firstname $lastname"
-        If(($location -ne $null) -and ($role -ne $null)){
-          Write-Verbose -Message 'We have details of Role and location'
-          $null = Set-Contact -Identity "$firstname $lastname" -Company $location -Title $role
+        If(Get-MailContact -Identity "$firstname $lastname"){
+          Write-verbose -message "Contact $($firstname) $($lastname) Already Exists"
+        } else {
+          New-MailContact -DisplayName "$firstname $lastname" -ExternalEmailAddress $ExternalEmailAddress -FirstName $firstname -LastName $lastname -Name "$firstname $lastname" 
+          If(($role -ne $null)){
+            Write-Verbose -Message 'We have details of Role and location'
+            $null = Set-Contact -Identity "$firstname $lastname" -Title $role
+          }
         }
+        
+      } Catch {
+        
+        
       }  
     }
     End
