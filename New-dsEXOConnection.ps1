@@ -24,7 +24,7 @@ function New-dsEXOConnection
     Process
     {
       Try{
-        $null = Get-PSSession -Name $sessionname -ErrorAction stop
+        Get-PSSession -Name $sessionname -ErrorAction stop
       } Catch {
         $UserCredential = Get-Credential
         $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -Name $sessionname -AllowRedirection
