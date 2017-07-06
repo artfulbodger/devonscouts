@@ -1,0 +1,1 @@
+﻿get-contact | group-object -Property Title | Select-Object Name,Count | Sort-Object Name | ft
