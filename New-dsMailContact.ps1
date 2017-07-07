@@ -46,14 +46,17 @@ function New-dsMailContact
     }
     Process
     {
-      Try {
+    $newcontact = $null  
+    Try {
         If(Get-MailContact -Identity "$firstname $lastname"){
           Write-verbose -message "Contact $($firstname) $($lastname) Already Exists"
         } else {
-          New-MailContact -DisplayName "$firstname $lastname" -ExternalEmailAddress $ExternalEmailAddress -FirstName $firstname -LastName $lastname -Name "$firstname $lastname" 
+          $newcontact = New-MailContact -DisplayName "$firstname $lastname" -ExternalEmailAddress $ExternalEmailAddress -FirstName $firstname -LastName $lastname -Name "$firstname $lastname" 
           If(($role -ne $null)){
             Write-Verbose -Message 'We have details of Role and location'
-            $null = Set-Contact -Identity "$firstname $lastname" -Title $role
+            If($newcontact){
+              $null = Set-Contact -Identity $newcontact.DistinguishedName -Title $role.trim()
+            }
           }
         }
         
