@@ -29,14 +29,23 @@ function New-dsO365User
   (
     [Parameter(Mandatory,HelpMessage='User first name')][string]$firstname,
     [Parameter(Mandatory,HelpMessage='User surname')][string]$lastname,
-    [Parameter(Mandatory,HelpMessage='Primary Compass role')][string]$role
+    [Parameter(Mandatory,HelpMessage='Primary Compass role')][string]$role,
+    [Parameter(Mandatory,HelpMessage='Compass Membership Number')][string]$membershipnumber,
+    [Parameter(Mandatory)][PSCredential]$credential,
+    [Parameter()][switch]$noteamscard
   )
 
   Begin
   {
-    Connect-MsolService    
-    $disabledplans = 'Deskless', 'FLOW_O365_P1', 'POWERAPPS_O365_P1', 'SWAY', 'YAMMER_ENTERPRISE'
+    #New-dsEXOConnection
+    Try {
+        Get-MsolDomain -ErrorAction Stop | Out-Null
+    } Catch {
+        Connect-MsolService -Credential $credential
+    }
+    $disabledplans = 'Deskless', 'FLOW_O365_P1', 'POWERAPPS_O365_P1', 'SWAY', 'YAMMER_ENTERPRISE', 'PROJECTWORKMANAGEMENT', 'FORMS_PLAN_E1', 'STREAM_O365_E1', 'SHAREPOINTWAC', 'MCOSTANDARD', 'SHAREPOINTSTANDARD'
     $licenseoptions = New-MsolLicenseOptions -AccountSkuId devonscouts:STANDARDWOFFPACK -DisabledPlans $disabledplans
+    Connect-AzureAD -Credential $credential | Out-Null
   }
   Process
   {
@@ -48,6 +57,8 @@ function New-dsO365User
         # Add license to existing O365 user
         Set-MSOLUser -UserPrincipalName $upn -UsageLocation GB
         Set-MsolUserLicense -UserPrincipalName $upn -LicenseOptions $licenseoptions
+        Start-Sleep -s 3
+        Set-AzureADUserExtension -ObjectId $upn -ExtensionName "extension_f78b8b10d59f499ca99da2acdc29191b_membership_number" -ExtensionValue $membershipnumber
       } else {
         # Licensed - now check if license list contains E2 SKU
         $licensedE2 = $false
@@ -59,11 +70,25 @@ function New-dsO365User
         If ($licensedE2 -eq $false) {
           # No E2 SKU license assigned
           Set-MsolUserLicense -UserPrincipalName $upn -LicenseOptions $licenseoptions
+          Set-AzureADUserExtension -ObjectId $upn -ExtensionName "extension_f78b8b10d59f499ca99da2acdc29191b_membership_number" -ExtensionValue $membershipnumber
         }
       }
     } catch [Microsoft.Online.Administration.Automation.MicrosoftOnlineException] {
       # User not found - go ahead and create user with E2 SKU license
-      New-MsolUser -UserPrincipalName $upn -FirstName $firstname -LastName $lastname -DisplayName $displayname -Password 'Scoutie1907' -ForceChangePassword $true -LicenseAssignment devonscouts:STANDARDWOFFPACK -LicenseOptions $licenseoptions -UsageLocation GB -Title $role
+      Try {
+        New-MsolUser -UserPrincipalName $upn -FirstName $firstname -LastName $lastname -DisplayName $displayname -Password 'Scoutie1907' -ForceChangePassword $true -LicenseAssignment devonscouts:STANDARDWOFFPACK -LicenseOptions $licenseoptions -UsageLocation GB -Title $role
+        Start-Sleep -s 3
+        Set-AzureADUserExtension -ObjectId $upn -ExtensionName "extension_f78b8b10d59f499ca99da2acdc29191b_membership_number" -ExtensionValue $membershipnumber
+        If($noteamscard) {
+        
+        } else {
+          New-dsUserTeamsCard -firstname $firstname -lastname $lastname -role $role -membershipnumber $membershipnumber
+        }
+      } Catch {
+        $errormessage = $_.Exception.Message
+        Write-Host "Failed to create user $upn. $errormessage"
+      }
+      
     }
   }
   End
