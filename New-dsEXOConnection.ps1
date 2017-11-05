@@ -12,26 +12,26 @@ function New-dsEXOConnection
       Override the internal session name used to identify the EXO session during creation.
   #>
 
-    [CmdletBinding()]
-    Param
-    (
-      [string]$sessionname = 'dsEXOConnection'
-    )
+  [CmdletBinding()]
+  Param
+  (
+    [string]$sessionname = 'dsEXOConnection'
+  )
 
-    Begin
-    {
+  Begin
+  {
+  }
+  Process
+  {
+    Try{
+      $null = Get-PSSession -Name $sessionname -ErrorAction stop
+    } Catch {
+      $UserCredential = Get-Credential
+      $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -Name $sessionname -AllowRedirection
+      Import-PSSession -Session $Session -AllowClobber
     }
-    Process
-    {
-      Try{
-        Get-PSSession -Name $sessionname -ErrorAction stop
-      } Catch {
-        $UserCredential = Get-Credential
-        $Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -Name $sessionname -AllowRedirection
-        Import-PSSession -Session $Session -AllowClobber
-      }
-    }
-    End
-    {
-    }
+  }
+  End
+  {
+  }
 }
