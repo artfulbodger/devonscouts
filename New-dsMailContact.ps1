@@ -36,6 +36,7 @@ function New-dsMailContact
         [Parameter(Mandatory,HelpMessage='Personal EMail address to send Email to')][string]$ExternalEmailAddress,
         [Parameter(Mandatory,HelpMessage='Contacts first name')][string]$firstname,
         [Parameter(Mandatory,HelpMessage='Contacts last name')][string]$lastname,
+        [Parameter(Mandatory)][string]$membership_number,
         [string]$location,
         [string]$role
     )
@@ -48,21 +49,25 @@ function New-dsMailContact
     {
     $newcontact = $null  
     Try {
-        If(Get-MailContact -Identity "$firstname $lastname"){
+        If((Get-MailContact -Identity "$ExternalEmailAddress" -ErrorAction 'SilentlyContinue').IsValid){
           Write-verbose -message "Contact $($firstname) $($lastname) Already Exists"
+          Write-verbose -Message "Updating Contact $($firstname) $($lastname) - $role ($location)"
+          $null = Set-Contact -Identity $ExternalEmailAddress -Title $role.trim() -Company $location
+          $null = Set-MailContact -Identity $ExternalEmailAddress -CustomAttribute1 $membership_number
         } else {
           $newcontact = New-MailContact -DisplayName "$firstname $lastname" -ExternalEmailAddress $ExternalEmailAddress -FirstName $firstname -LastName $lastname -Name "$firstname $lastname" 
           If(($role -ne $null)){
             Write-Verbose -Message 'We have details of Role and location'
             If($newcontact){
-              $null = Set-Contact -Identity $newcontact.DistinguishedName -Title $role.trim()
+              $null = Set-Contact -Identity $ExternalEmailAddress -Title $role.trim() -Company $location
+              $null = Set-MailContact -Identity $ExternalEmailAddress -CustomAttribute1 $membership_number
             }
           }
         }
         
       } Catch {
         
-        
+        Write-Verbose -Message $_.Exception.Message
       }  
     }
     End
