@@ -5,7 +5,7 @@ function Import-dsContactsFromCompass
     [OutputType([int])]
     Param
     (
-        [string]$csvfile= 'C:\Users\Artfulbodger\Downloads\County Member Directory.csv'
+        [parameter(Mandatory,HelpMessage='Path to County Member Directory Compass report')][string]$csvfile
     )
 
     Begin
@@ -13,12 +13,20 @@ function Import-dsContactsFromCompass
       $contacts_list = Import-Csv -Path $csvfile
     }
     Process
-    {
+    { 
       Foreach ($contact in $contacts_list){
+        $location = $null
         If ($contact.EmailAddress1 -inotlike '*@devonscouts.org.uk'){
           If($contact.EmailAddress1) {
             Write-verbose -Message "Creating contact for $($contact.preferred_forename) $($contact.surname)"
-            New-dsMailContact -firstname $contact.preferred_forename -lastname $contact.surname -ExternalEmailAddress $contact.EmailAddress1 -role $contact.Role
+            If($contact.Scout_Group){
+              $location = $contact.Scout_Group
+            } elseif ($contact.district) {
+              $location = $contact.district
+            } elseif ($contact.County) {
+              $location = $contact.county
+            }
+            New-dsMailContact -firstname $contact.preferred_forename -lastname $contact.surname -ExternalEmailAddress $contact.EmailAddress1 -role $contact.Role -membership_number $contact.contact_number -location $location
             
           } ELSE {
             Write-debug -Message "$($contact.preferred_forename) $($contact.surname) does not have an email address stored in Compass"
