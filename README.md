@@ -6,4 +6,4 @@ Documentation can be found on the [GitHub Pages](https://artfulbodger.github.io/
 
 # Status
 
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/artfulbodger/devonscouts.svg?columns=all)](http://waffle.io/artfulbodger/devonscouts)
+![GitHub issues](https://img.shields.io/github/issues-raw/artfulbodger/devonscouts.svg?style=flat-square)
