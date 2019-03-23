@@ -6,4 +6,6 @@ Documentation can be found on the [GitHub Pages](https://artfulbodger.github.io/
 
 # Status
 
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/artfulbodger/devonscouts.svg?columns=all)](http://waffle.io/artfulbodger/devonscouts)
+![GitHub issues](https://img.shields.io/github/issues-raw/artfulbodger/devonscouts.svg)  ![GitHub issues by-label](https://img.shields.io/github/issues/artfulbodger/devonscouts/bug.svg?color=red&label=bugs)
+
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/artfulbodger/devonscouts.svg)](http://isitmaintained.com/project/artfulbodger/devonscouts "Average time to resolve an issue")  [![Percentage of issues still open](http://isitmaintained.com/badge/open/artfulbodger/devonscouts.svg)](http://isitmaintained.com/project/artfulbodger/devonscouts "Percentage of issues still open")
